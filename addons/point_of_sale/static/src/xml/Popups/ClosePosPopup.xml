@@ -80,14 +80,15 @@
                 </main>
                 <footer class="footer">
                     <div class="button highlight" t-on-click="confirm">Close Session</div>
+                    <div class="button" t-on-click="openDrawer">Open Drawer</div>
                     <div class="button" t-on-click="closePos" title="Visit the Backend but keep session open">Backend</div>
                     <div class="button" t-att-class="{'disabled': !canCancel()}" t-on-click="cancel">Discard</div>
                     <!-- Download Sale Details -->
-                    <div class="small button icon" 
+                    <!-- <div class="small button icon" 
                         t-on-click="downloadSalesReport" 
                         title="Download a report with all the sales of the current PoS Session">
                             <i class="fa fa-download" role="img"/>
-                    </div>
+                    </div> -->
                     <!-- Print Sale Details -->
                     <div t-if="env.proxy.printer" class="small button icon">
                         <SaleDetailsButton/>
