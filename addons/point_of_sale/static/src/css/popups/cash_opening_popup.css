@@ -34,3 +34,8 @@
     resize: none;
     height: 150px;
 }
+
+.pos .opening-cash-control .drawer-button {
+    float: left;
+    margin-left: 10px;
+}

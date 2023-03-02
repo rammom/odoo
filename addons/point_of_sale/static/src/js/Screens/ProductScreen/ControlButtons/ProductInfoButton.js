@@ -39,12 +39,12 @@ odoo.define('point_of_sale.ProductInfoButton', function(require) {
     }
     ProductInfoButton.template = 'ProductInfoButton';
 
-    ProductScreen.addControlButton({
-        component: ProductInfoButton,
-        position: ['before', 'SetFiscalPositionButton'],
-    });
+    // ProductScreen.addControlButton({
+    //     component: ProductInfoButton,
+    //     position: ['before', 'SetFiscalPositionButton'],
+    // });
 
-    Registries.Component.add(ProductInfoButton);
+    // Registries.Component.add(ProductInfoButton);
 
     return ProductInfoButton;
 });

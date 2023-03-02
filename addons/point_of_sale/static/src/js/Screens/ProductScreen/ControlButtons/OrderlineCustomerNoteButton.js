@@ -27,11 +27,11 @@ odoo.define('point_of_sale.OrderlineCustomerNoteButton', function(require) {
     }
     OrderlineCustomerNoteButton.template = 'OrderlineCustomerNoteButton';
 
-    ProductScreen.addControlButton({
-        component: OrderlineCustomerNoteButton,
-    });
+    // ProductScreen.addControlButton({
+    //     component: OrderlineCustomerNoteButton,
+    // });
 
-    Registries.Component.add(OrderlineCustomerNoteButton);
+    // Registries.Component.add(OrderlineCustomerNoteButton);
 
     return OrderlineCustomerNoteButton;
 });

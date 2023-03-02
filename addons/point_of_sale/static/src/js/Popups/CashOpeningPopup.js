@@ -50,6 +50,9 @@ odoo.define('point_of_sale.CashOpeningPopup', function(require) {
                 this.state.openingCash = 0;
             }
         }
+        handleOpenDrawer() {
+            window.print();
+        }
     }
 
     CashOpeningPopup.template = 'CashOpeningPopup';
