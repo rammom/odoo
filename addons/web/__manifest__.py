@@ -209,7 +209,6 @@ This module provides the core of the Odoo Web Client.
 
             'web/static/src/legacy/scss/domain_selector.scss',
             'web/static/src/legacy/scss/model_field_selector.scss',
-            'web/static/src/legacy/scss/progress_bar.scss',
             'web/static/src/legacy/scss/dropdown.scss',
             'web/static/src/legacy/scss/tooltip.scss',
             'web/static/src/legacy/scss/switch_company_menu.scss',
@@ -288,6 +287,8 @@ This module provides the core of the Odoo Web Client.
             'web/static/src/legacy/xml/kanban.xml',
             'web/static/src/legacy/xml/search_panel.xml',
             'web/static/src/legacy/xml/week_days.xml',
+            # Don't include dark mode files in light mode
+            ('remove', 'web/static/src/**/*.dark.scss'),
         ],
         "web.assets_backend_legacy_lazy": [
             ("include", "web._assets_helpers"),
@@ -522,6 +523,7 @@ This module provides the core of the Odoo Web Client.
         ],
         "web.dark_mode_assets_backend": [
             ('include', 'web.assets_backend'),
+            'web/static/src/**/*.dark.scss',
         ],
         "web.dark_mode_variables": [
             ('before', 'base/static/src/scss/onboarding.variables.scss', 'base/static/src/scss/onboarding.variables.dark.scss'),

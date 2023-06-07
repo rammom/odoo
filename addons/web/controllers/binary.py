@@ -80,7 +80,9 @@ class Binary(http.Controller):
         if nocache:
             send_file_kwargs['max_age'] = None
 
-        return stream.get_response(**send_file_kwargs)
+        res = stream.get_response(**send_file_kwargs)
+        res.headers['Content-Security-Policy'] = "default-src 'none'"
+        return res
 
     @http.route(['/web/assets/debug/<string:filename>',
         '/web/assets/debug/<path:extra>/<string:filename>',
@@ -90,10 +92,11 @@ class Binary(http.Controller):
     # pylint: disable=redefined-builtin,invalid-name
     def content_assets(self, id=None, filename=None, unique=False, extra=None, nocache=False):
         if not id:
+            domain = [('url', '!=', False)]
             if extra:
-                domain = [('url', '=like', f'/web/assets/%/{extra}/{filename}')]
+                domain += [('url', '=like', f'/web/assets/%/{extra}/{filename}')]
             else:
-                domain = [
+                domain += [
                     ('url', '=like', f'/web/assets/%/{filename}'),
                     ('url', 'not like', f'/web/assets/%/%/{filename}')
                 ]
@@ -160,7 +163,9 @@ class Binary(http.Controller):
         if nocache:
             send_file_kwargs['max_age'] = None
 
-        return stream.get_response(**send_file_kwargs)
+        res = stream.get_response(**send_file_kwargs)
+        res.headers['Content-Security-Policy'] = "default-src 'none'"
+        return res
 
     @http.route('/web/binary/upload_attachment', type='http', auth="user")
     def upload_attachment(self, model, id, ufile, callback=None):

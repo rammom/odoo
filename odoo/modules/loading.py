@@ -191,6 +191,7 @@ def load_module_graph(cr, graph, status=None, perform_checks=True,
             py_module = sys.modules['odoo.addons.%s' % (module_name,)]
             pre_init = package.info.get('pre_init_hook')
             if pre_init:
+                registry.setup_models(cr)
                 getattr(py_module, pre_init)(cr)
 
         model_names = registry.load(cr, package)
@@ -326,7 +327,7 @@ def load_module_graph(cr, graph, status=None, perform_checks=True,
         if test_results and not test_results.wasSuccessful():
             _logger.error(
                 "Module %s: %d failures, %d errors of %d tests",
-                module_name, len(test_results.failures), len(test_results.errors),
+                module_name, test_results.failures_count, test_results.errors_count,
                 test_results.testsRun
             )
 
@@ -562,6 +563,7 @@ def load_modules(registry, force_demo=False, status=None, update_module=False):
                     if uninstall_hook:
                         py_module = sys.modules['odoo.addons.%s' % (pkg.name,)]
                         getattr(py_module, uninstall_hook)(cr, registry)
+                        env.flush_all()
 
                 Module = env['ir.module.module']
                 Module.browse(modules_to_remove.values()).module_uninstall()

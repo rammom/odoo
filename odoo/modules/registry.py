@@ -114,7 +114,7 @@ class Registry(Mapping):
         self._sql_constraints = set()
         self._init = True
         self._database_translated_fields = ()  # names of translated fields in database
-        self._assertion_report = odoo.tests.runner.OdooTestResult()
+        self._assertion_report = odoo.tests.result.OdooTestResult()
         self._fields_by_model = None
         self._ordinary_tables = None
         self._constraint_queue = deque()
@@ -359,6 +359,11 @@ class Registry(Mapping):
 
     def _discard_fields(self, fields: list):
         """ Discard the given fields from the registry's internal data structures. """
+        for f in fields:
+            # tests usually don't reload the registry, so when they create
+            # custom fields those may not have the entire dependency setup, and
+            # may be missing from these maps
+            self.field_depends.pop(f, None)
 
         # discard fields from field triggers
         self.__dict__.pop('_field_triggers', None)

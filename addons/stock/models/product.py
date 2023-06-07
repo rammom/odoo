@@ -245,6 +245,7 @@ class Product(models.Model):
             return self.description_pickingout or self.name
         if picking_code == 'internal':
             return self.description_picking or description
+        return description
 
     def _get_domain_locations(self):
         '''
@@ -850,6 +851,13 @@ class ProductTemplate(models.Model):
         if 'company_id' in vals and vals['company_id']:
             products_changing_company = self.filtered(lambda product: product.company_id.id != vals['company_id'])
             if products_changing_company:
+                move = self.env['stock.move'].sudo().search([
+                    ('product_id', 'in', products_changing_company.product_variant_ids.ids),
+                    ('company_id', 'not in', [vals['company_id'], False]),
+                ], order=None, limit=1)
+                if move:
+                    raise UserError(_("This product's company cannot be changed as long as there are stock moves of it belonging to another company."))
+
                 # Forbid changing a product's company when quant(s) exist in another company.
                 quant = self.env['stock.quant'].sudo().search([
                     ('product_id', 'in', products_changing_company.product_variant_ids.ids),
@@ -978,7 +986,7 @@ class ProductTemplate(models.Model):
 
     def action_product_tmpl_forecast_report(self):
         self.ensure_one()
-        if self.env.ref('stock.stock_replenishment_product_template_action', raise_if_not_found=True):
+        if self.env.ref('stock.stock_replenishment_product_template_action', raise_if_not_found=False):
             action = self.env["ir.actions.actions"]._for_xml_id('stock.stock_replenishment_product_template_action')
         else:
             action = self.env["ir.actions.actions"]._for_xml_id('stock.stock_replenishment_product_product_action')

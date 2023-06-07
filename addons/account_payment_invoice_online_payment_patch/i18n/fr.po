@@ -13,7 +13,7 @@ msgstr ""
 "POT-Creation-Date: 2023-01-26 13:32+0000\n"
 "PO-Revision-Date: 2023-02-02 12:22+0000\n"
 "Last-Translator: Jolien De Paepe, 2023\n"
-"Language-Team: French (https://www.transifex.com/odoo/teams/41243/fr/)\n"
+"Language-Team: French (https://app.transifex.com/odoo/teams/41243/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -133,7 +133,7 @@ msgstr "Paiement des factures en ligne"
 #. module: account_payment_invoice_online_payment_patch
 #: model:ir.model,name:account_payment_invoice_online_payment_patch.model_account_move
 msgid "Journal Entry"
-msgstr "Écriture comptable"
+msgstr "Pièce comptable"
 
 #. module: account_payment_invoice_online_payment_patch
 #: model:ir.model.fields,field_description:account_payment_invoice_online_payment_patch.field_res_config_settings__pay_invoices_online

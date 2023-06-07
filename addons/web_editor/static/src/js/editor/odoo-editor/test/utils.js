@@ -1,3 +1,5 @@
+/** @odoo-module **/
+
 import { OdooEditor } from '../src/OdooEditor.js';
 import { sanitize } from '../src/utils/sanitize.js';
 import { closestElement } from '../src/utils/utils.js';
@@ -6,6 +8,11 @@ export const Direction = {
     BACKWARD: 'BACKWARD',
     FORWARD: 'FORWARD',
 };
+
+// True iff test is being run with its mobile implementation.
+let isMobileTest = false;
+// True iff test has mobile implementation for any called method.
+let hasMobileTest = false;
 
 function _nextNode(node) {
     let next = node.firstChild || node.nextSibling;
@@ -274,14 +281,19 @@ export function customErrorMessage(assertLocation, value, expected) {
 }
 
 export async function testEditor(Editor = OdooEditor, spec, options = {}) {
+    hasMobileTest = false;
+    isMobileTest = options.isMobile;
+
     const testNode = document.createElement('div');
-    document.querySelector('#editor-test-container').innerHTML = '';
-    document.querySelector('#editor-test-container').appendChild(testNode);
+    const testContainer = document.querySelector('#editor-test-container');
+    testContainer.innerHTML = '';
+    testContainer.append(testNode);
+    testContainer.append(document.createTextNode('')); // Formatting spaces.
     let styleTag;
     if (spec.styleContent) {
         styleTag = document.createElement('style');
         styleTag.textContent = spec.styleContent;
-        document.querySelector('#editor-test-container').appendChild(styleTag);
+        testContainer.append(styleTag);
     }
 
     // Add the content to edit and remove the "[]" markers *before* initializing
@@ -320,7 +332,12 @@ export async function testEditor(Editor = OdooEditor, spec, options = {}) {
 
         if (spec.stepFunction) {
             editor.observerActive('beforeUnitTests');
-            await spec.stepFunction(editor);
+            try {
+                await spec.stepFunction(editor);
+            } catch (e) {
+                e.message = (isMobileTest ? '[MOBILE VERSION] ' : '') + e.message;
+                throw e;
+            }
             editor.observerUnactive('afterUnitTests');
         }
 
@@ -370,6 +387,8 @@ export async function testEditor(Editor = OdooEditor, spec, options = {}) {
 
     if (error) {
         throw error;
+    } else if (hasMobileTest && !isMobileTest) {
+        await testEditor(Editor, spec, { ...options, isMobile: true });
     }
 }
 
@@ -441,27 +460,29 @@ export async function deleteForward(editor) {
 }
 
 export async function deleteBackward(editor) {
-    const selection = document.getSelection();
-    if (selection.isCollapsed) {
-        editor.execCommand('oDeleteBackward');
+    // This method has two implementations (desktop and mobile).
+    if (isMobileTest) {
+        // Some mobile keyboard use input event to trigger delete.
+        // This is a way to simulate this behavior.
+        const inputEvent = new InputEvent('input', {
+            inputType: 'deleteContentBackward',
+            data: null,
+            bubbles: true,
+            cancelable: false,
+        });
+        editor._onInput(inputEvent);
     } else {
-        // Better representation of what happened in the editor when the user
-        // presses the backspace key.
-        await triggerEvent(editor.editable, 'keydown', { key: 'Backspace' });
-        editor.document.execCommand('delete');
+        hasMobileTest = true; // Flag test for a re-run as mobile.
+        const selection = document.getSelection();
+        if (selection.isCollapsed) {
+            editor.execCommand('oDeleteBackward');
+        } else {
+            // Better representation of what happened in the editor when the user
+            // presses the backspace key.
+            await triggerEvent(editor.editable, 'keydown', { key: 'Backspace' });
+            editor.document.execCommand('delete');
+        }
     }
-}
-
-export async function deleteBackwardMobile(editor) {
-    // Some mobile keyboard use input event to trigger delete.
-    // This is a way to simulate this behavior.
-    const inputEvent = new InputEvent('input', {
-        inputType: 'deleteContentBackward',
-        data: null,
-        bubbles: true,
-        cancelable: false,
-    });
-    editor._onInput(inputEvent);
 }
 
 export async function insertParagraphBreak(editor) {

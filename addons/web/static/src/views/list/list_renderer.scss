@@ -61,6 +61,7 @@
             }
 
             &.o_list_number {
+                /*rtl:ignore*/
                 text-align: right;
             }
             &.o_list_text {
@@ -360,18 +361,6 @@
                 font-weight: 400;
                 padding: 0;
                 vertical-align: baseline;
-            }
-        }
-    }
-
-    // ------- Force progress bars to respect table's layout -------
-    .o_progressbar_cell {
-        .o_progressbar {
-            display: table-row;
-
-            .o_progressbar_value {
-                width: 45px;
-                min-width: 45px;
             }
         }
     }
